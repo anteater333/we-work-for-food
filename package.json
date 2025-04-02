@@ -5,7 +5,8 @@
   "license": "MIT",
   "scripts": {
     "start": "node index.js",
-    "deploy": "git add * && git commit -m 'menu update' && git push"
+    "predeploy": "yarn start",
+    "deploy": "git add -A && git commit -m 'menu update' && git push"
   },
   "dependencies": {
     "axios": "^1.8.4",
