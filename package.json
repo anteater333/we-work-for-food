@@ -5,7 +5,7 @@
   "license": "MIT",
   "scripts": {
     "start": "node index.js",
-    "publish": "git push"
+    "deploy": "git add * && git commit -m 'menu update' && git push"
   },
   "dependencies": {
     "axios": "^1.8.4",
