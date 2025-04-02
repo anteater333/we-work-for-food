@@ -4,9 +4,7 @@ const fs = require("fs").promises;
 const iconv = require("iconv-lite");
 const { fromPath } = require("pdf2pic");
 const { parse, stringify } = require("querystring");
-const { config } = require("dotenv");
-
-config();
+const path = require("path");
 
 const baseUrl = "http://www.pvv.co.kr/bbs/";
 const tablePage = "index.php?page=1&code=bbs_menu01";
@@ -48,11 +46,20 @@ axios
       });
   })
   .then((response) => {
-    // 3단계, 다운받은 PDF를 파일로 저장하기
-    return fs.writeFile("./bob/thisWeekMenu.pdf", response.data);
+    // 3단계, 다운받은 PDF를 파일로 저장하고 기존 이미지를 삭제하기
+    return fs.writeFile("./bob/thisWeekMenu.pdf", response.data).then(
+      fs.readdir("./bob").then((files) => {
+        const pngFiles = files.filter((file) => path.extname(file) === ".png");
+        const deletePromises = pngFiles.map((file) =>
+          fs.rm(path.join("./bob", file))
+        );
+        return Promise.all(deletePromises);
+      })
+    );
   })
   .then(() => {
     // 4단계, 저장한 PDF를 읽어 이미지화 하기
+
     const convert = fromPath("./bob/thisWeekMenu.pdf", {
       density: 300,
       saveFilename: "thisWeekMenu",
@@ -65,28 +72,26 @@ axios
     return convert(1, { responseType: "image" });
   })
   .then(() => {
-    // 5단계, 저장한 이미지를 임시 호스팅 사이트로 발송
+    // 5단계, 이미지 이름 난수화
 
-    const imgBBKey = process.env.IMGBB_KEY;
+    const randomNumber = Math.floor(Math.random() * 1000000);
+    const oldPath = "./bob/thisWeekMenu.1.png";
+    const newPath = `./bob/thisWeekMenu.${randomNumber}.png`;
 
-    const imagePath = "./bob/thisWeekMenu.1.png";
-    return fs
-      .readFile(imagePath)
-      .then((imageData) => {
-        const formData = new FormData();
-        formData.append("key", imgBBKey);
-        formData.append("image", imageData.toString("base64"));
-        formData.append("expiration", 604800); // 1주
-
-        return axios.post("https://api.imgbb.com/1/upload", formData);
-      })
-      .then((response) => {
-        return response.data.data.url;
-      });
+    return fs.rename(oldPath, newPath).then(() => {
+      return newPath;
+    });
   })
-  .then((imgUrl) => {
-    // 6단계, 이미지 URL을 메신저에 공유하기 (TODO)
-    // Note. Teams가 역시 Microsoft제 제품 다운 API력을 보여주고 있기 때문에 일단 보류. 방법 구상 중.
+  .then((newPath) => {
+    // 6단계, index.html 내부 이미지 이름 수정
+
+    return fs.readFile("./index.html", "utf8").then((html) => {
+      const updatedHtml = html.replace(
+        /thisWeekMenu\.\d+\.png/g,
+        newPath.split("/").pop()
+      );
+      return fs.writeFile("./index.html", updatedHtml, "utf8");
+    });
   })
   .catch((error) => {
     console.error("Error:", error);
