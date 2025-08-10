@@ -93,6 +93,9 @@ axios
       return fs.writeFile("./index.html", updatedHtml, "utf8");
     });
   })
+  .then(() => {
+    console.log("DONE");
+  })
   .catch((error) => {
     console.error("Error:", error);
   });
