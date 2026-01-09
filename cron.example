@@ -1,0 +1,1 @@
+0 20 * * 0 cd /{pwd}/food-menu-project && /{which}/yarn deploy >> /{log}/deploy.log 2>&1
