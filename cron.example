@@ -1,1 +1,2 @@
 0 20 * * 0 /Users/jose/Public/we-work-for-food/deploy.sh >> /Users/jose/Public/we-work-for-food/log/deploy.log 2>&1
+0 9 * * 1 /Users/jose/Public/we-work-for-food/dispatch.sh >> /Users/jose/Public/we-work-for-food/log/dispatch.log 2>&1

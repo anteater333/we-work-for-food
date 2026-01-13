@@ -6,7 +6,8 @@
   "scripts": {
     "start": "node index.js",
     "predeploy": "yarn start",
-    "deploy": "git pull && git add -A && git commit -m 'menu update' && git push"
+    "deploy": "git pull && git add -A && git commit -m 'menu update' && git push",
+    "dispatch": "node messenger/hq.js"
   },
   "dependencies": {
     "axios": "^1.8.4",
