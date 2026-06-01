@@ -31,15 +31,32 @@ export default {
       type: "message",
       attachments: [
         {
-          contentType: "application/vnd.microsoft.card.hero",
+          contentType: "application/vnd.microsoft.card.adaptive",
           content: {
-            title: `🍽️ ${dateText} | 하림 ${getRandomFood()}`,
-            images: [{ url: bobImageURL }],
-            buttons: [
+            type: "AdaptiveCard",
+            version: "1.2",
+            $schema: "http://adaptivecards.io",
+            body: [
               {
-                type: "openUrl",
+                type: "TextBlock",
+                text: `🍽️ ${dateText} | 하림 ${getRandomFood()}`,
+                weight: "Bolder",
+                size: "Medium",
+              },
+              {
+                type: "Image",
+                url: bobImageURL,
+                size: "stretch",
+                msTeams: {
+                  allowExpansion: true,
+                },
+              },
+            ],
+            actions: [
+              {
+                type: "Action.OpenUrl",
                 title: "🔍크게보기",
-                value: bobImageURL,
+                url: bobImageURL,
               },
             ],
           },
