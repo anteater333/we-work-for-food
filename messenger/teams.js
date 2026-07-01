@@ -27,6 +27,7 @@ const dateText = `${month}월 ${date}일`;
 export default {
   run: async () => {
     const webhookURL = process.env.TEAMS_WEBHOOK_URL;
+    const webhookURL2 = process.env.TEAMS_WEBHOOK_URL2;
     const payload = {
       type: "message",
       attachments: [
@@ -66,6 +67,23 @@ export default {
 
     try {
       const response = await fetch(webhookURL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+
+      if (response.ok) {
+        console.log("🚀 Teams 메시지 전송 성공!");
+      } else {
+        console.error("🔥 전송 실패:", response.status, await response.text());
+      }
+    } catch (error) {
+      console.error("🔥 네트워크 에러:", error);
+    }
+
+    // 심신미약에 따른 파멸적인 하드코딩
+    try {
+      const response = await fetch(webhookURL2, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
