@@ -51,6 +51,10 @@ export default {
                 msTeams: {
                   allowExpansion: true,
                 },
+                selectAction: {
+                  type: "Action.OpenUrl",
+                  url: bobImageURL,
+                },
               },
             ],
             actions: [
